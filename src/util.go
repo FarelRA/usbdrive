@@ -134,7 +134,20 @@ func verifyMount(lunFile, expectedPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to read LUN file: %w", err)
 	}
-	if mountedPath != expectedPath {
+	
+	// Resolve both paths to handle symlinks (e.g., /sdcard -> /storage/emulated/0)
+	expectedResolved, err1 := filepath.EvalSymlinks(expectedPath)
+	mountedResolved, err2 := filepath.EvalSymlinks(mountedPath)
+	
+	// If we can't resolve, compare as-is
+	if err1 != nil {
+		expectedResolved = expectedPath
+	}
+	if err2 != nil {
+		mountedResolved = mountedPath
+	}
+	
+	if mountedResolved != expectedResolved {
 		return fmt.Errorf("expected %s, got %s", expectedPath, mountedPath)
 	}
 	return nil
