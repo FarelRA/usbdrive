@@ -154,16 +154,25 @@ var mountCmd = &cobra.Command{
 			return nil
 		}
 
-		// Force read-only for sysfs backend (after dry-run check)
-		if backend.Name() == "sysfs" && readWrite {
-			logger.Warn("Sysfs backend only supports read-only mode, forcing -ro")
-			readWrite = false
+		// Force adjustments for backend limitations (after dry-run check)
+		if backend.Name() == "sysfs" {
+			// Sysfs ONLY supports read-only
+			if readWrite {
+				logger.Warn("Sysfs backend only supports read-only mode, forcing -ro")
+				readWrite = false
+			}
+			if useCDROM {
+				logger.Warn("Sysfs backend does not support CDROM mode, disabling -cdrom")
+				useCDROM = false
+			}
 		}
 
-		// Force CDROM off for UDC backend
-		if backend.Name() == "udc" && useCDROM {
-			logger.Warn("UDC backend does not support CDROM mode, disabling -cdrom")
-			useCDROM = false
+		if backend.Name() == "udc" {
+			// UDC does not support CDROM
+			if useCDROM {
+				logger.Warn("UDC backend does not support CDROM mode, disabling -cdrom")
+				useCDROM = false
+			}
 		}
 
 		// Recalculate mode after adjustments
