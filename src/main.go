@@ -96,16 +96,7 @@ var mountCmd = &cobra.Command{
 				return fmt.Errorf("missing file argument")
 			}
 			imagePath = args[0]
-			
-			// Default is read-write unless -ro is specified
-			if mountRO {
-				readWrite = false
-			} else if mountRW {
-				readWrite = true
-			} else {
-				readWrite = true // default
-			}
-			
+			readWrite = !mountRO // default is read-write unless -ro specified
 			useCDROM = mountCDROM
 			forceBackend = mountForce
 		}
@@ -235,7 +226,7 @@ var statusCmd = &cobra.Command{
 	Long:  "Show current mount status including backend, file, and mount mode.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		backends := []Backend{&ConfigFSBackend{}, &SysfsBackend{}}
+		backends := []Backend{&ConfigFSBackend{}, &UDCBackend{}, &SysfsBackend{}}
 
 		for _, backend := range backends {
 			if !backend.Supported() {
@@ -277,13 +268,13 @@ func main() {
 	mountCmd.Flags().BoolVar(&mountRO, "ro", false, "mount as read-only")
 	mountCmd.Flags().BoolVar(&mountCDROM, "cdrom", false, "mount as CDROM device")
 	
-	mountCmd.Flags().StringVarP(&mountForce, "force", "f", "", "force backend: configfs or sysfs")
+	mountCmd.Flags().StringVarP(&mountForce, "force", "f", "", "force backend: configfs, sysfs, or udc")
 	mountCmd.Flags().BoolVarP(&mountDryRun, "dry-run", "n", false, "preview operation without executing")
 	mountCmd.Flags().BoolVarP(&mountVerbose, "verbose", "v", false, "verbose output")
 
 	// Unmount flags
 	unmountCmd.Flags().SortFlags = false
-	unmountCmd.Flags().StringVarP(&unmountForce, "force", "f", "", "force backend: configfs or sysfs")
+	unmountCmd.Flags().StringVarP(&unmountForce, "force", "f", "", "force backend: configfs, sysfs, or udc")
 	unmountCmd.Flags().BoolVarP(&unmountDryRun, "dry-run", "n", false, "preview operation without executing")
 	unmountCmd.Flags().BoolVarP(&unmountVerbose, "verbose", "v", false, "verbose output")
 

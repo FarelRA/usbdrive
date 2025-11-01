@@ -10,7 +10,7 @@ import (
 type Config struct {
 	File    string `json:"file"`
 	Mode    string `json:"mode,omitempty"`    // "ro", "rw", "cdrom"
-	Backend string `json:"backend,omitempty"` // "configfs", "sysfs"
+	Backend string `json:"backend,omitempty"` // "configfs", "sysfs", "udc"
 }
 
 func loadConfig(path string) (*Config, error) {
