@@ -147,6 +147,9 @@ var mountCmd = &cobra.Command{
 			if backend.Name() == "sysfs" && useCDROM {
 				fmt.Printf("  WARNING: sysfs backend does not support CDROM mode\n")
 			}
+			if backend.Name() == "udc" && !readWrite {
+				fmt.Printf("  WARNING: udc backend only supports read-write mode, will force -rw\n")
+			}
 			if backend.Name() == "udc" && useCDROM {
 				fmt.Printf("  WARNING: udc backend does not support CDROM mode\n")
 			}
@@ -168,7 +171,11 @@ var mountCmd = &cobra.Command{
 		}
 
 		if backend.Name() == "udc" {
-			// UDC does not support CDROM
+			// UDC ONLY supports read-write (ro flag is always 0)
+			if !readWrite {
+				logger.Warn("UDC backend only supports read-write mode, forcing -rw")
+				readWrite = true
+			}
 			if useCDROM {
 				logger.Warn("UDC backend does not support CDROM mode, disabling -cdrom")
 				useCDROM = false
