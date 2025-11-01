@@ -1,0 +1,5 @@
+{
+  "file": "/sdcard/ubuntu.iso",
+  "mode": "ro",
+  "backend": "configfs"
+}

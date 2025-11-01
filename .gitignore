@@ -1,0 +1,24 @@
+# Build artifacts
+build/
+libs/
+out/
+*.zip
+*.sha256
+
+# Go
+isodrive
+*.exe
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Q CLI
+.amazonq/
