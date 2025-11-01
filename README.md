@@ -194,7 +194,7 @@ usbdrive mount -c /data/adb/modules/usbdrive/usbdrive.json
 
 ### Legacy (UDC Gadget)
 - Legacy USB Device Controller interface
-- Read-only only
+- Supports read-write mode
 - Found on some Qualcomm devices
 - Path: `/sys/class/udc/*/device/gadget`
 
