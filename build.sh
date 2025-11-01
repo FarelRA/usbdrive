@@ -45,7 +45,7 @@ cp -r libs out/module/
 # Package standalone binaries
 echo "Packaging standalone binaries..."
 for abi in armeabi-v7a arm64-v8a x86 x86_64; do
-    (cd out/module/libs/$abi && zip -q9 "../../../../usbdrive-$VERSION-$abi.zip" usbdrive)
+    (cd out/module/libs/$abi && zip -q9 "../../../usbdrive-$VERSION-$abi.zip" usbdrive)
 done
 
 # Cleanup
