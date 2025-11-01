@@ -28,7 +28,7 @@ func (s *SysfsBackend) Mount(isoPath string, opts MountOptions) error {
 
 	// Disable USB
 	logger.Info("Disabling USB")
-	if err := s.setEnabled(false); err != nil {
+	if err := s.setUSBActive(false); err != nil {
 		return fmt.Errorf("disable USB: %w", err)
 	}
 
@@ -46,7 +46,7 @@ func (s *SysfsBackend) Mount(isoPath string, opts MountOptions) error {
 
 	// Enable USB
 	logger.Info("Enabling USB")
-	if err := s.setEnabled(true); err != nil {
+	if err := s.setUSBActive(true); err != nil {
 		return fmt.Errorf("enable USB: %w", err)
 	}
 
@@ -56,7 +56,7 @@ func (s *SysfsBackend) Mount(isoPath string, opts MountOptions) error {
 func (s *SysfsBackend) Unmount() error {
 	// Disable USB
 	logger.Info("Disabling USB")
-	if err := s.setEnabled(false); err != nil {
+	if err := s.setUSBActive(false); err != nil {
 		return fmt.Errorf("disable USB: %w", err)
 	}
 
@@ -74,7 +74,7 @@ func (s *SysfsBackend) Unmount() error {
 
 	// Enable USB
 	logger.Info("Enabling USB")
-	if err := s.setEnabled(true); err != nil {
+	if err := s.setUSBActive(true); err != nil {
 		return fmt.Errorf("enable USB: %w", err)
 	}
 
@@ -95,9 +95,9 @@ func (s *SysfsBackend) Status() (*MountStatus, error) {
 	}, nil
 }
 
-func (s *SysfsBackend) setEnabled(enabled bool) error {
+func (s *SysfsBackend) setUSBActive(active bool) error {
 	value := "0"
-	if enabled {
+	if active {
 		value = "1"
 	}
 	return writeFile(sysfsEnable, value)

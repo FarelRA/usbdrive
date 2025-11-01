@@ -33,23 +33,23 @@ func (c *ConfigFSBackend) Mount(imagePath string, opts MountOptions) error {
 		return fmt.Errorf("find config: %w", err)
 	}
 
-	udc, err := c.getUDC(gadgetRoot)
+	udc, err := c.getUSBController(gadgetRoot)
 	if err != nil {
 		return fmt.Errorf("get UDC: %w", err)
 	}
 	logger.Info("Current UDC controller", "udc", udc)
 
-	// Disable UDC
-	logger.Info("Disabling UDC")
-	if err := c.setUDC(gadgetRoot, ""); err != nil {
-		return fmt.Errorf("disable UDC: %w", err)
+	// Disable USB
+	logger.Info("Disabling USB")
+	if err := c.setUSBActive(gadgetRoot, false, ""); err != nil {
+		return fmt.Errorf("disable USB: %w", err)
 	}
 
-	// Ensure UDC is re-enabled even on failure
+	// Ensure USB is re-enabled even on failure
 	defer func() {
 		if udc != "" {
-			logger.Info("Re-enabling UDC (cleanup)", "udc", udc)
-			c.setUDC(gadgetRoot, udc)
+			logger.Info("Re-enabling USB (cleanup)", "udc", udc)
+			c.setUSBActive(gadgetRoot, true, udc)
 		}
 	}()
 
@@ -122,22 +122,22 @@ func (c *ConfigFSBackend) Unmount() error {
 		return fmt.Errorf("find gadget: %w", err)
 	}
 
-	udc, err := c.getUDC(gadgetRoot)
+	udc, err := c.getUSBController(gadgetRoot)
 	if err != nil {
 		return fmt.Errorf("get UDC: %w", err)
 	}
 
-	// Disable UDC
-	logger.Info("Disabling UDC")
-	if err := c.setUDC(gadgetRoot, ""); err != nil {
-		return fmt.Errorf("disable UDC: %w", err)
+	// Disable USB
+	logger.Info("Disabling USB")
+	if err := c.setUSBActive(gadgetRoot, false, ""); err != nil {
+		return fmt.Errorf("disable USB: %w", err)
 	}
 
-	// Ensure UDC is re-enabled even on failure
+	// Ensure USB is re-enabled even on failure
 	defer func() {
 		if udc != "" {
-			logger.Info("Re-enabling UDC (cleanup)", "udc", udc)
-			c.setUDC(gadgetRoot, udc)
+			logger.Info("Re-enabling USB (cleanup)", "udc", udc)
+			c.setUSBActive(gadgetRoot, true, udc)
 		}
 	}()
 
@@ -239,7 +239,7 @@ func (c *ConfigFSBackend) findConfigRoot(gadgetRoot string) (string, error) {
 	return "", fmt.Errorf("no config found")
 }
 
-func (c *ConfigFSBackend) getUDC(gadgetRoot string) (string, error) {
+func (c *ConfigFSBackend) getUSBController(gadgetRoot string) (string, error) {
 	udcFile := filepath.Join(gadgetRoot, "UDC")
 	udc, err := readFile(udcFile)
 	if err != nil {
@@ -248,7 +248,11 @@ func (c *ConfigFSBackend) getUDC(gadgetRoot string) (string, error) {
 	return udc, nil
 }
 
-func (c *ConfigFSBackend) setUDC(gadgetRoot, udc string) error {
+func (c *ConfigFSBackend) setUSBActive(gadgetRoot string, active bool, udcName string) error {
 	udcFile := filepath.Join(gadgetRoot, "UDC")
-	return writeFile(udcFile, udc)
+	value := ""
+	if active {
+		value = udcName
+	}
+	return writeFile(udcFile, value)
 }
