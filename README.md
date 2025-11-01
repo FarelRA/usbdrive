@@ -128,7 +128,7 @@ This shows you which backend would be used, the file path, and the mount mode.
 
 ### Backend Selection
 
-Usbdrive automatically selects the best available backend (preferring ConfigFS over Sysfs and UDC). If you need to force a specific backend for testing or compatibility reasons:
+Usbdrive automatically selects the best available backend (preferring ConfigFS, then UDC, then Sysfs). If you need to force a specific backend for testing or compatibility reasons:
 
 ```bash
 # Force ConfigFS (modern, supports all features)

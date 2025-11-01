@@ -159,6 +159,9 @@ var mountCmd = &cobra.Command{
 			if backend.Name() == "sysfs" && (readWrite || useCDROM) {
 				fmt.Printf("  WARNING: sysfs backend only supports read-only mode\n")
 			}
+			if backend.Name() == "udc" && useCDROM {
+				fmt.Printf("  WARNING: udc backend does not support CDROM mode\n")
+			}
 			
 			return nil
 		}
@@ -297,7 +300,7 @@ func main() {
 }
 
 func selectBackend(force string) (Backend, error) {
-	backends := []Backend{&ConfigFSBackend{}, &SysfsBackend{}, &UDCBackend{}}
+	backends := []Backend{&ConfigFSBackend{}, &UDCBackend{}, &SysfsBackend{}}
 
 	if force != "" {
 		for _, b := range backends {
