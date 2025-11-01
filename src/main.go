@@ -114,6 +114,12 @@ var mountCmd = &cobra.Command{
 			return fmt.Errorf("invalid image file: %w\nHint: Ensure the file exists and is readable", err)
 		}
 
+		// Resolve to absolute path for mounting
+		imagePath, err = filepath.Abs(imagePath)
+		if err != nil {
+			return fmt.Errorf("resolve path: %w", err)
+		}
+
 		backend, err := selectBackend(forceBackend)
 		if err != nil {
 			return err
