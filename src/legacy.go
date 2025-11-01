@@ -45,28 +45,10 @@ func (l *LegacyBackend) Mount(imagePath string, opts MountOptions) error {
 		return fmt.Errorf("find lun file: %w", err)
 	}
 
-	lunDir := filepath.Dir(lunFile)
-
 	// Clear existing file
 	logger.Info("Clearing LUN file")
 	if err := writeFile(lunFile, ""); err != nil {
 		return fmt.Errorf("clear lun file: %w", err)
-	}
-
-	// Set read-only flag
-	roFile := filepath.Join(lunDir, "ro")
-	if fileExists(roFile) {
-		// Make ro file writable
-		os.Chmod(roFile, 0644)
-		
-		roValue := "1"
-		if opts.ReadWrite {
-			roValue = "0"
-		}
-		logger.Info("Setting read-only flag", "value", roValue)
-		if err := writeFile(roFile, roValue); err != nil {
-			return fmt.Errorf("set ro flag: %w", err)
-		}
 	}
 
 	// Mount the image
@@ -126,13 +108,10 @@ func (l *LegacyBackend) Status() (*MountStatus, error) {
 		return &MountStatus{Mounted: false}, nil
 	}
 
-	lunDir := filepath.Dir(lunFile)
-	ro, _ := readFile(filepath.Join(lunDir, "ro"))
-
 	return &MountStatus{
 		Mounted:  true,
 		File:     file,
-		ReadOnly: ro == "1",
+		ReadOnly: false, // legacy always read-write (ro flag is always 0)
 		CDROM:    false,
 	}, nil
 }
