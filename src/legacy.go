@@ -56,6 +56,9 @@ func (l *LegacyBackend) Mount(imagePath string, opts MountOptions) error {
 	// Set read-only flag
 	roFile := filepath.Join(lunDir, "ro")
 	if fileExists(roFile) {
+		// Make ro file writable
+		os.Chmod(roFile, 0644)
+		
 		roValue := "1"
 		if opts.ReadWrite {
 			roValue = "0"
