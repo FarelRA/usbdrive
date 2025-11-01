@@ -115,6 +115,7 @@ var mountCmd = &cobra.Command{
 		}
 
 		// Resolve to absolute path for mounting
+		var err error
 		imagePath, err = filepath.Abs(imagePath)
 		if err != nil {
 			return fmt.Errorf("resolve path: %w", err)
