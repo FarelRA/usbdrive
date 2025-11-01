@@ -58,7 +58,7 @@ var versionCmd = &cobra.Command{
 var mountCmd = &cobra.Command{
 	Use:   "mount [flags] <file>",
 	Short: "Mount a disk image as USB device",
-	Long:  "Mount a disk image as USB mass storage device. Default mode is read-write.",
+	Long:  "Mount a disk image as USB mass storage device.",
 	Args:  cobra.MaximumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if os.Geteuid() != 0 {
@@ -137,7 +137,7 @@ var mountCmd = &cobra.Command{
 			} else if backend.Name() == "sysfs" {
 				fmt.Printf("  Capabilities: read-only\n")
 			} else if backend.Name() == "udc" {
-				fmt.Printf("  Capabilities: read-write (always)\n")
+				fmt.Printf("  Capabilities: read-write\n")
 			}
 			
 			// Validate mode compatibility
