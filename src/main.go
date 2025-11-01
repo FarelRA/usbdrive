@@ -160,6 +160,12 @@ var mountCmd = &cobra.Command{
 			readWrite = false
 		}
 
+		// Force CDROM off for UDC backend
+		if backend.Name() == "udc" && useCDROM {
+			logger.Warn("UDC backend does not support CDROM mode, disabling -cdrom")
+			useCDROM = false
+		}
+
 		// Recalculate mode after adjustments
 		mode = getMode(readWrite, useCDROM)
 

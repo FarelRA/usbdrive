@@ -37,7 +37,7 @@ func (u *UDCBackend) Supported() bool {
 
 func (u *UDCBackend) Mount(imagePath string, opts MountOptions) error {
 	if opts.CDROM {
-		logger.Warn("UDC backend ignores -cdrom flag")
+		logger.Warn("UDC backend does not support CDROM mode, ignoring -cdrom flag")
 	}
 
 	lunFile, err := u.findLunFile()
