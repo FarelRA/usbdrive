@@ -81,12 +81,12 @@ var mountCmd = &cobra.Command{
 			forceBackend = cfg.Backend
 			
 			switch cfg.Mode {
-			case "rw":
-				readWrite = true
+			case "ro":
+				readWrite = false
 			case "cdrom":
 				useCDROM = true
 			default:
-				readWrite = false // ro is default
+				readWrite = true // rw is default
 			}
 			
 			logger.Info("Loaded configuration", "path", mountConfig)
@@ -96,7 +96,16 @@ var mountCmd = &cobra.Command{
 				return fmt.Errorf("missing file argument")
 			}
 			imagePath = args[0]
-			readWrite = mountRW
+			
+			// Default is read-write unless -ro is specified
+			if mountRO {
+				readWrite = false
+			} else if mountRW {
+				readWrite = true
+			} else {
+				readWrite = true // default
+			}
+			
 			useCDROM = mountCDROM
 			forceBackend = mountForce
 		}
@@ -105,7 +114,7 @@ var mountCmd = &cobra.Command{
 			return fmt.Errorf("cannot use -cdrom with -rw (CDROM devices are always read-only)")
 		}
 
-		if mountRO && readWrite {
+		if mountRO && mountRW {
 			return fmt.Errorf("cannot use -ro with -rw (conflicting flags)")
 		}
 
@@ -117,6 +126,12 @@ var mountCmd = &cobra.Command{
 		backend, err := selectBackend(forceBackend)
 		if err != nil {
 			return err
+		}
+
+		// Force read-only for sysfs backend
+		if backend.Name() == "sysfs" && readWrite {
+			logger.Warn("Sysfs backend only supports read-only mode, forcing -ro")
+			readWrite = false
 		}
 
 		mode := getMode(readWrite, useCDROM)
@@ -134,8 +149,10 @@ var mountCmd = &cobra.Command{
 			// Show backend capabilities
 			if backend.Name() == "configfs" {
 				fmt.Printf("  Capabilities: read-write, cdrom\n")
-			} else {
+			} else if backend.Name() == "sysfs" {
 				fmt.Printf("  Capabilities: read-only\n")
+			} else if backend.Name() == "legacy" {
+				fmt.Printf("  Capabilities: read-write (always)\n")
 			}
 			
 			// Validate mode compatibility
@@ -253,8 +270,8 @@ func main() {
 	mountCmd.Flags().SortFlags = false
 	mountCmd.Flags().StringVarP(&mountConfig, "config", "c", "", "load configuration from file")
 	
-	mountCmd.Flags().BoolVar(&mountRW, "rw", false, "mount as read-write")
-	mountCmd.Flags().BoolVar(&mountRO, "ro", false, "mount as read-only (default)")
+	mountCmd.Flags().BoolVar(&mountRW, "rw", false, "mount as read-write (default)")
+	mountCmd.Flags().BoolVar(&mountRO, "ro", false, "mount as read-only")
 	mountCmd.Flags().BoolVar(&mountCDROM, "cdrom", false, "mount as CDROM device")
 	
 	mountCmd.Flags().StringVarP(&mountForce, "force", "f", "", "force backend: configfs or sysfs")

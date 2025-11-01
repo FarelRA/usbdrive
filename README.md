@@ -66,10 +66,16 @@ Note: Standalone installation does not include auto-mount on boot. You'll need t
 
 ### Basic Operations
 
-The most common use case is mounting an ISO or disk image in read-only mode. Simply provide the path to your image file:
+The most common use case is mounting an ISO or disk image. By default, images are mounted in read-write mode:
 
 ```bash
 usbdrive mount /sdcard/ubuntu.iso
+```
+
+To mount as read-only, use the `-ro` flag:
+
+```bash
+usbdrive mount -ro /sdcard/ubuntu.iso
 ```
 
 To check what's currently mounted and which backend is being used:
@@ -86,11 +92,13 @@ usbdrive unmount
 
 ### Read-Write Mode
 
-If you need the host computer to be able to modify the image file (for example, creating a persistent live USB), use the `-rw` flag. This only works with the ConfigFS backend:
+Read-write mode is the default. The host computer can modify the image file:
 
 ```bash
-usbdrive mount -rw /sdcard/data.img
+usbdrive mount /sdcard/data.img
 ```
+
+Note: Sysfs backend only supports read-only mode and will automatically force `-ro` if needed.
 
 ### CDROM Mode
 
