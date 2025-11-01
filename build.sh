@@ -39,13 +39,13 @@ mkdir -p out
 cp -r module out/
 cp -r libs out/module/
 
-# Create module zip
-(cd out && zip -qr9 module-release.zip module)
+# Create module zip (without module/ prefix in zip)
+(cd out/module && zip -qr9 ../usbdrive-$VERSION.zip *)
 
 # Package standalone binaries
 echo "Packaging standalone binaries..."
 for abi in armeabi-v7a arm64-v8a x86 x86_64; do
-    (cd out/module/libs/$abi && zip -q9 "../../../usbdrive-$VERSION-$abi.zip" usbdrive)
+    (cd out/module/libs/$abi && zip -q9 "../../../../usbdrive-$VERSION-$abi.zip" usbdrive)
 done
 
 # Cleanup
@@ -55,6 +55,6 @@ echo "Generating checksums..."
 (cd out && sha256sum *.zip > checksums.sha256)
 
 echo "✓ Build complete:"
-echo "  - Module: out/module-release.zip"
+echo "  - Module: out/usbdrive-$VERSION.zip"
 echo "  - Binaries: out/usbdrive-$VERSION-*.zip"
 echo "  - Checksums: out/checksums.sha256"

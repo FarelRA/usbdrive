@@ -7,7 +7,7 @@
 ```
 
 This generates:
-- `out/module-release.zip` - Magisk module (all architectures)
+- `out/usbdrive-VERSION.zip` - Magisk module (all architectures)
 - `out/usbdrive-VERSION-arm64-v8a.zip` - Standalone ARM64 binary
 - `out/usbdrive-VERSION-armeabi-v7a.zip` - Standalone ARM binary
 - `out/usbdrive-VERSION-x86_64.zip` - Standalone x86_64 binary

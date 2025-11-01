@@ -26,7 +26,7 @@ Usbdrive allows you to present ISO files, disk images, or any block device image
 
 Usbdrive is distributed as a Magisk module for easy installation on rooted Android devices.
 
-1. Download the latest `module-release.zip` from the releases page
+1. Download the latest `usbdrive-VERSION.zip` from the releases page
 2. Open Magisk Manager and navigate to the Modules section
 3. Tap "Install from storage" and select the downloaded ZIP file
 4. Wait for the installation to complete
@@ -198,7 +198,7 @@ usbdrive mount -c /data/adb/modules/usbdrive/usbdrive.json
 ```
 
 This builds and packages:
-- Magisk module with all architectures (`module-release.zip`)
+- Magisk module with all architectures (`usbdrive-VERSION.zip`)
 - Standalone binaries for each architecture:
   - ARM (armeabi-v7a)
   - ARM64 (arm64-v8a)
