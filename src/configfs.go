@@ -205,12 +205,8 @@ func (c *ConfigFSBackend) findGadgetRoot() (string, error) {
 	}
 
 	gadgetDir := filepath.Join(mountPoint, "usb_gadget")
-	
-	// Create usb_gadget directory if it doesn't exist
 	if !dirExists(gadgetDir) {
-		if err := os.MkdirAll(gadgetDir, 0755); err != nil {
-			return "", fmt.Errorf("create usb_gadget dir: %w", err)
-		}
+		return "", fmt.Errorf("usb_gadget directory not found")
 	}
 	
 	entries, err := os.ReadDir(gadgetDir)
@@ -232,77 +228,11 @@ func (c *ConfigFSBackend) findGadgetRoot() (string, error) {
 		}
 	}
 
-	// No active gadget found, create one
-	gadgetPath := filepath.Join(gadgetDir, "g1")
-	if !dirExists(gadgetPath) {
-		logger.Info("Creating new USB gadget", "path", gadgetPath)
-		if err := os.MkdirAll(gadgetPath, 0755); err != nil {
-			return "", fmt.Errorf("create gadget: %w", err)
-		}
-		
-		// Set basic USB device descriptors
-		if err := writeFile(filepath.Join(gadgetPath, "idVendor"), "0x18d1"); err != nil {
-			return "", fmt.Errorf("set idVendor: %w", err)
-		}
-		if err := writeFile(filepath.Join(gadgetPath, "idProduct"), "0x4e26"); err != nil {
-			return "", fmt.Errorf("set idProduct: %w", err)
-		}
-		
-		// Create strings
-		stringsDir := filepath.Join(gadgetPath, "strings/0x409")
-		if err := os.MkdirAll(stringsDir, 0755); err != nil {
-			return "", fmt.Errorf("create strings dir: %w", err)
-		}
-		if err := writeFile(filepath.Join(stringsDir, "serialnumber"), "123456"); err != nil {
-			return "", fmt.Errorf("set serialnumber: %w", err)
-		}
-		if err := writeFile(filepath.Join(stringsDir, "manufacturer"), "Android"); err != nil {
-			return "", fmt.Errorf("set manufacturer: %w", err)
-		}
-		if err := writeFile(filepath.Join(stringsDir, "product"), "USB Drive"); err != nil {
-			return "", fmt.Errorf("set product: %w", err)
-		}
-		
-		// Create config
-		configDir := filepath.Join(gadgetPath, "configs/c.1")
-		if err := os.MkdirAll(configDir, 0755); err != nil {
-			return "", fmt.Errorf("create config dir: %w", err)
-		}
-		configStringsDir := filepath.Join(configDir, "strings/0x409")
-		if err := os.MkdirAll(configStringsDir, 0755); err != nil {
-			return "", fmt.Errorf("create config strings dir: %w", err)
-		}
-		if err := writeFile(filepath.Join(configStringsDir, "configuration"), "Config 1"); err != nil {
-			return "", fmt.Errorf("set configuration: %w", err)
-		}
-		
-		// Enable the gadget with first available UDC
-		udcList, err := os.ReadDir(filepath.Join(mountPoint, "../devices"))
-		if err == nil && len(udcList) > 0 {
-			for _, udc := range udcList {
-				if udc.Name()[0] != '.' {
-					if err := writeFile(filepath.Join(gadgetPath, "UDC"), udc.Name()); err == nil {
-						logger.Info("Enabled USB gadget", "udc", udc.Name())
-						break
-					}
-				}
-			}
-		}
-	}
-
-	return gadgetPath, nil
+	return "", fmt.Errorf("no active gadget found")
 }
 
 func (c *ConfigFSBackend) findConfigRoot(gadgetRoot string) (string, error) {
 	configDir := filepath.Join(gadgetRoot, "configs")
-	
-	// Create configs directory if it doesn't exist
-	if !dirExists(configDir) {
-		if err := os.MkdirAll(configDir, 0755); err != nil {
-			return "", fmt.Errorf("create configs dir: %w", err)
-		}
-	}
-	
 	entries, err := os.ReadDir(configDir)
 	if err != nil {
 		return "", fmt.Errorf("read configs: %w", err)
@@ -314,8 +244,7 @@ func (c *ConfigFSBackend) findConfigRoot(gadgetRoot string) (string, error) {
 		}
 	}
 
-	// No config found, use c.1 (should have been created by findGadgetRoot)
-	return filepath.Join(configDir, "c.1"), nil
+	return "", fmt.Errorf("no config found")
 }
 
 func (c *ConfigFSBackend) getUDC(gadgetRoot string) (string, error) {

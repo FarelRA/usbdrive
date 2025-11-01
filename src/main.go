@@ -280,7 +280,7 @@ func main() {
 }
 
 func selectBackend(force string) (Backend, error) {
-	backends := []Backend{&ConfigFSBackend{}, &SysfsBackend{}}
+	backends := []Backend{&ConfigFSBackend{}, &SysfsBackend{}, &LegacyBackend{}}
 
 	if force != "" {
 		for _, b := range backends {
@@ -288,10 +288,10 @@ func selectBackend(force string) (Backend, error) {
 				if b.Supported() {
 					return b, nil
 				}
-				return nil, fmt.Errorf("backend '%s' is not supported on this device\nHint: Check if /sys/kernel/config/usb_gadget (configfs) or /sys/class/android_usb (sysfs) exists", force)
+				return nil, fmt.Errorf("backend '%s' is not supported on this device\nHint: Check if /sys/kernel/config/usb_gadget (configfs), /sys/class/android_usb (sysfs), or /sys/class/udc/*/device/gadget (legacy) exists", force)
 			}
 		}
-		return nil, fmt.Errorf("unknown backend '%s'\nHint: Valid backends are 'configfs' or 'sysfs'", force)
+		return nil, fmt.Errorf("unknown backend '%s'\nHint: Valid backends are 'configfs', 'sysfs', or 'legacy'", force)
 	}
 
 	for _, b := range backends {
@@ -300,7 +300,7 @@ func selectBackend(force string) (Backend, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("no supported USB gadget backend found\nHint: Your kernel may not support USB gadget mode. Check if configfs or android_usb is available")
+	return nil, fmt.Errorf("no supported USB gadget backend found\nHint: Your kernel may not support USB gadget mode. Check if configfs, android_usb, or legacy UDC gadget is available")
 }
 
 func getMode(rw, cdrom bool) string {

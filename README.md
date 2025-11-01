@@ -184,11 +184,19 @@ usbdrive mount -c /data/adb/modules/usbdrive/usbdrive.json
 - Modern USB gadget interface
 - Supports read-write and CDROM modes
 - Available on most recent kernels
+- Path: `/sys/kernel/config/usb_gadget`
 
-### Sysfs (Legacy)
-- Old Android USB interface
+### Sysfs (Android USB)
+- Android-specific USB interface
 - Read-only only
-- Fallback for older devices
+- Common on older Android devices
+- Path: `/sys/devices/virtual/android_usb/android0`
+
+### Legacy (UDC Gadget)
+- Legacy USB Device Controller interface
+- Read-only only
+- Found on some Qualcomm devices
+- Path: `/sys/class/udc/*/device/gadget`
 
 ## Building
 
