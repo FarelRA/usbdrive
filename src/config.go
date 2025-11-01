@@ -44,8 +44,8 @@ func loadConfig(path string) (*Config, error) {
 	}
 
 	// Validate backend if specified
-	if cfg.Backend != "" && cfg.Backend != "configfs" && cfg.Backend != "sysfs" {
-		return nil, fmt.Errorf("invalid backend: %s (must be configfs or sysfs)", cfg.Backend)
+	if cfg.Backend != "" && cfg.Backend != "configfs" && cfg.Backend != "sysfs" && cfg.Backend != "legacy" {
+		return nil, fmt.Errorf("invalid backend: %s (must be configfs, sysfs, or legacy)", cfg.Backend)
 	}
 
 	return &cfg, nil

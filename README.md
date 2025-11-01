@@ -128,7 +128,7 @@ This shows you which backend would be used, the file path, and the mount mode.
 
 ### Backend Selection
 
-Usbdrive automatically selects the best available backend (preferring ConfigFS over Sysfs). If you need to force a specific backend for testing or compatibility reasons:
+Usbdrive automatically selects the best available backend (preferring ConfigFS over Sysfs and Legacy). If you need to force a specific backend for testing or compatibility reasons:
 
 ```bash
 # Force ConfigFS (modern, supports all features)
@@ -136,6 +136,9 @@ usbdrive mount -f configfs /sdcard/ubuntu.iso
 
 # Force Sysfs (legacy, read-only only)
 usbdrive mount -f sysfs /sdcard/ubuntu.iso
+
+# Force Legacy (UDC gadget, read-write only)
+usbdrive mount -f legacy /sdcard/ubuntu.iso
 ```
 
 ### Configuration File
@@ -153,13 +156,13 @@ Create a JSON config file for automatic mounting on boot:
 ```json
 {
   "file": "/sdcard/ubuntu.iso",
-  "mode": "ro",
+  "mode": "rw",
   "backend": "configfs"
 }
 ```
 
-**Mode options:** `ro` (read-only), `rw` (read-write), `cdrom`  
-**Backend options:** `configfs` (modern), `sysfs` (legacy)
+**Mode options:** `rw` (read-write, default), `ro` (read-only), `cdrom`  
+**Backend options:** `configfs` (modern), `sysfs` (legacy), `legacy` (UDC)
 
 The Magisk module includes an example config file at `/data/adb/modules/usbdrive/usbdrive.json.example`. Copy and edit it to enable auto-mount on boot:
 
@@ -172,7 +175,7 @@ vi /data/adb/modules/usbdrive/usbdrive.json
 cat > /data/adb/modules/usbdrive/usbdrive.json << 'EOF'
 {
   "file": "/sdcard/ubuntu.iso",
-  "mode": "ro"
+  "mode": "rw"
 }
 EOF
 
@@ -230,12 +233,16 @@ This project is a complete rewrite of [isodrive-magisk](https://github.com/nitan
 
 Key differences from the original:
 - Rewritten in Go (from C++)
+- Three backend support (ConfigFS, Sysfs, Legacy UDC)
 - Proper error handling and validation
 - File existence checking before mount
 - Status command to check current state
 - Better CLI with subcommands
-- Verbose mode for debugging
+- Verbose and dry-run modes
+- Read-write mode by default
+- Automatic backend detection
 - No memory leaks
+- Smaller binary size
 - Better logging
 - Graceful cleanup
 

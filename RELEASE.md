@@ -42,6 +42,16 @@ sha256sum -c checksums.sha256
 Or for individual files:
 
 ```bash
-sha256sum usbdrive-3.0.0-arm64-v8a.zip
+sha256sum usbdrive-1.0.0-arm64-v8a.zip
 # Compare with checksums.sha256
 ```
+
+## Features
+
+- Three backend support: ConfigFS, Sysfs, Legacy UDC
+- Read-write mode by default
+- CDROM mode support (ConfigFS only)
+- Automatic backend detection
+- JSON configuration file support
+- Magisk module with auto-mount on boot
+

@@ -58,7 +58,7 @@ var versionCmd = &cobra.Command{
 var mountCmd = &cobra.Command{
 	Use:   "mount [flags] <file>",
 	Short: "Mount a disk image as USB device",
-	Long:  "Mount a disk image as USB mass storage device.",
+	Long:  "Mount a disk image as USB mass storage device. Default mode is read-write.",
 	Args:  cobra.MaximumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if os.Geteuid() != 0 {
