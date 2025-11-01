@@ -19,8 +19,11 @@ func (s *SysfsBackend) Supported() bool {
 }
 
 func (s *SysfsBackend) Mount(isoPath string, opts MountOptions) error {
-	if opts.CDROM || opts.ReadWrite {
-		logger.Warn("Sysfs backend ignores -cdrom and -rw flags")
+	if opts.CDROM {
+		logger.Warn("Sysfs backend does not support CDROM mode, ignoring -cdrom flag")
+	}
+	if opts.ReadWrite {
+		logger.Warn("Sysfs backend does not support read-write mode, ignoring -rw flag")
 	}
 
 	// Disable USB
