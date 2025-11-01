@@ -128,3 +128,27 @@ func validateSafePath(path string) error {
 	return nil
 }
 
+// verifyMount checks if the file was successfully mounted
+func verifyMount(lunFile, expectedPath string) error {
+	mountedPath, err := readFile(lunFile)
+	if err != nil {
+		return fmt.Errorf("failed to read LUN file: %w", err)
+	}
+	if mountedPath != expectedPath {
+		return fmt.Errorf("expected %s, got %s", expectedPath, mountedPath)
+	}
+	return nil
+}
+
+// verifyUnmount checks if the file was successfully unmounted
+func verifyUnmount(lunFile string) error {
+	content, err := readFile(lunFile)
+	if err != nil {
+		return err
+	}
+	if content != "" {
+		return fmt.Errorf("LUN file not empty")
+	}
+	return nil
+}
+

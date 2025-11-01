@@ -59,12 +59,8 @@ func (u *UDCBackend) Mount(imagePath string, opts MountOptions) error {
 
 	// Verify mount
 	logger.Info("Verifying mount")
-	mountedPath, err := readFile(lunFile)
-	if err != nil {
+	if err := verifyMount(lunFile, imagePath); err != nil {
 		return fmt.Errorf("verify mount: %w", err)
-	}
-	if mountedPath != imagePath {
-		return fmt.Errorf("verify mount: expected %s, got %s", imagePath, mountedPath)
 	}
 
 	logger.Info("Mount verified successfully")
@@ -85,12 +81,8 @@ func (u *UDCBackend) Unmount() error {
 
 	// Verify unmount
 	logger.Info("Verifying unmount")
-	content, err := readFile(lunFile)
-	if err != nil {
+	if err := verifyUnmount(lunFile); err != nil {
 		return fmt.Errorf("verify unmount: %w", err)
-	}
-	if content != "" {
-		return fmt.Errorf("verify unmount: LUN file not empty")
 	}
 
 	logger.Info("Unmount verified successfully")

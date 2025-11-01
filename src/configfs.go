@@ -108,12 +108,8 @@ func (c *ConfigFSBackend) Mount(imagePath string, opts MountOptions) error {
 
 	// Verify mount succeeded
 	logger.Info("Verifying mount")
-	mountedPath, err := readFile(lunFile)
-	if err != nil {
-		return fmt.Errorf("verify mount: failed to read LUN file: %w", err)
-	}
-	if mountedPath != imagePath {
-		return fmt.Errorf("verify mount: expected %s, got %s", imagePath, mountedPath)
+	if err := verifyMount(lunFile, imagePath); err != nil {
+		return fmt.Errorf("verify mount: %w", err)
 	}
 
 	logger.Info("Mount verified successfully")
@@ -156,12 +152,8 @@ func (c *ConfigFSBackend) Unmount() error {
 
 	// Verify unmount
 	logger.Info("Verifying unmount")
-	content, err := readFile(lunFile)
-	if err != nil {
+	if err := verifyUnmount(lunFile); err != nil {
 		return fmt.Errorf("verify unmount: %w", err)
-	}
-	if content != "" {
-		return fmt.Errorf("verify unmount: LUN file not empty")
 	}
 
 	logger.Info("Unmount verified successfully")
