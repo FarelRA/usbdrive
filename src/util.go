@@ -25,7 +25,10 @@ func findMountPoint(fsType string) string {
 
 	// Fallback for Android
 	if fsType == "configfs" {
-		if dirExists("/config/usb_gadget") {
+		if dirExists("/sys/kernel/config") {
+			return "/sys/kernel/config"
+		}
+		if dirExists("/config") {
 			return "/config"
 		}
 	}

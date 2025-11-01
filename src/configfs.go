@@ -17,8 +17,8 @@ func (c *ConfigFSBackend) Supported() bool {
 	if mountPoint == "" {
 		return false
 	}
-	gadgetPath := filepath.Join(mountPoint, "usb_gadget")
-	return dirExists(gadgetPath)
+	// Check if we can access the configfs mount point
+	return dirExists(mountPoint)
 }
 
 func (c *ConfigFSBackend) Mount(imagePath string, opts MountOptions) error {
