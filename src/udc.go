@@ -6,14 +6,14 @@ import (
 	"path/filepath"
 )
 
-type LegacyBackend struct{}
+type UDCBackend struct{}
 
-func (l *LegacyBackend) Name() string {
-	return "legacy"
+func (u *UDCBackend) Name() string {
+	return "udc"
 }
 
-func (l *LegacyBackend) Supported() bool {
-	// Check for legacy UDC gadget interface
+func (u *UDCBackend) Supported() bool {
+	// Check for UDC gadget interface
 	udcDir := "/sys/class/udc"
 	if !dirExists(udcDir) {
 		return false
@@ -35,12 +35,12 @@ func (l *LegacyBackend) Supported() bool {
 	return false
 }
 
-func (l *LegacyBackend) Mount(imagePath string, opts MountOptions) error {
+func (u *UDCBackend) Mount(imagePath string, opts MountOptions) error {
 	if opts.CDROM {
-		logger.Warn("Legacy backend ignores -cdrom flag")
+		logger.Warn("UDC backend ignores -cdrom flag")
 	}
 
-	lunFile, err := l.findLunFile()
+	lunFile, err := u.findLunFile()
 	if err != nil {
 		return fmt.Errorf("find lun file: %w", err)
 	}
@@ -71,8 +71,8 @@ func (l *LegacyBackend) Mount(imagePath string, opts MountOptions) error {
 	return nil
 }
 
-func (l *LegacyBackend) Unmount() error {
-	lunFile, err := l.findLunFile()
+func (u *UDCBackend) Unmount() error {
+	lunFile, err := u.findLunFile()
 	if err != nil {
 		return fmt.Errorf("find lun file: %w", err)
 	}
@@ -97,8 +97,8 @@ func (l *LegacyBackend) Unmount() error {
 	return nil
 }
 
-func (l *LegacyBackend) Status() (*MountStatus, error) {
-	lunFile, err := l.findLunFile()
+func (u *UDCBackend) Status() (*MountStatus, error) {
+	lunFile, err := u.findLunFile()
 	if err != nil {
 		return &MountStatus{Mounted: false}, nil
 	}
@@ -111,12 +111,12 @@ func (l *LegacyBackend) Status() (*MountStatus, error) {
 	return &MountStatus{
 		Mounted:  true,
 		File:     file,
-		ReadOnly: false, // legacy always read-write (ro flag is always 0)
+		ReadOnly: false, // UDC always read-write (ro flag is always 0)
 		CDROM:    false,
 	}, nil
 }
 
-func (l *LegacyBackend) findLunFile() (string, error) {
+func (u *UDCBackend) findLunFile() (string, error) {
 	udcDir := "/sys/class/udc"
 	entries, err := os.ReadDir(udcDir)
 	if err != nil {

@@ -151,7 +151,7 @@ var mountCmd = &cobra.Command{
 				fmt.Printf("  Capabilities: read-write, cdrom\n")
 			} else if backend.Name() == "sysfs" {
 				fmt.Printf("  Capabilities: read-only\n")
-			} else if backend.Name() == "legacy" {
+			} else if backend.Name() == "udc" {
 				fmt.Printf("  Capabilities: read-write (always)\n")
 			}
 			
@@ -297,7 +297,7 @@ func main() {
 }
 
 func selectBackend(force string) (Backend, error) {
-	backends := []Backend{&ConfigFSBackend{}, &SysfsBackend{}, &LegacyBackend{}}
+	backends := []Backend{&ConfigFSBackend{}, &SysfsBackend{}, &UDCBackend{}}
 
 	if force != "" {
 		for _, b := range backends {
@@ -305,10 +305,10 @@ func selectBackend(force string) (Backend, error) {
 				if b.Supported() {
 					return b, nil
 				}
-				return nil, fmt.Errorf("backend '%s' is not supported on this device\nHint: Check if /sys/kernel/config/usb_gadget (configfs), /sys/class/android_usb (sysfs), or /sys/class/udc/*/device/gadget (legacy) exists", force)
+				return nil, fmt.Errorf("backend '%s' is not supported on this device\nHint: Check if /sys/kernel/config/usb_gadget (configfs), /sys/class/android_usb (sysfs), or /sys/class/udc/*/device/gadget (udc) exists", force)
 			}
 		}
-		return nil, fmt.Errorf("unknown backend '%s'\nHint: Valid backends are 'configfs', 'sysfs', or 'legacy'", force)
+		return nil, fmt.Errorf("unknown backend '%s'\nHint: Valid backends are 'configfs', 'sysfs', or 'udc'", force)
 	}
 
 	for _, b := range backends {
@@ -317,7 +317,7 @@ func selectBackend(force string) (Backend, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("no supported USB gadget backend found\nHint: Your kernel may not support USB gadget mode. Check if configfs, android_usb, or legacy UDC gadget is available")
+	return nil, fmt.Errorf("no supported USB gadget backend found\nHint: Your kernel may not support USB gadget mode. Check if configfs, android_usb, or UDC gadget is available")
 }
 
 func getMode(rw, cdrom bool) string {

@@ -48,7 +48,7 @@ sha256sum usbdrive-1.0.0-arm64-v8a.zip
 
 ## Features
 
-- Three backend support: ConfigFS, Sysfs, Legacy UDC
+- Three backend support: ConfigFS, Sysfs, UDC
 - Read-write mode by default
 - CDROM mode support (ConfigFS only)
 - Automatic backend detection
