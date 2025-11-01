@@ -205,8 +205,8 @@ var mountCmd = &cobra.Command{
 	},
 }
 
-var unmountCmd = &cobra.Command{
-	Use:   "unmount [flags]",
+var umountCmd = &cobra.Command{
+	Use:   "umount [flags]",
 	Short: "Unmount currently mounted image",
 	Long:  "Unmount currently mounted disk image.",
 	Args:  cobra.NoArgs,
@@ -301,15 +301,15 @@ func main() {
 	mountCmd.Flags().BoolVarP(&mountVerbose, "verbose", "v", false, "verbose output")
 
 	// Unmount flags
-	unmountCmd.Flags().SortFlags = false
-	unmountCmd.Flags().StringVarP(&unmountForce, "force", "f", "", "force backend: configfs, sysfs, or udc")
-	unmountCmd.Flags().BoolVarP(&unmountDryRun, "dry-run", "n", false, "preview operation without executing")
-	unmountCmd.Flags().BoolVarP(&unmountVerbose, "verbose", "v", false, "verbose output")
+	umountCmd.Flags().SortFlags = false
+	umountCmd.Flags().StringVarP(&unmountForce, "force", "f", "", "force backend: configfs, sysfs, or udc")
+	umountCmd.Flags().BoolVarP(&unmountDryRun, "dry-run", "n", false, "preview operation without executing")
+	umountCmd.Flags().BoolVarP(&unmountVerbose, "verbose", "v", false, "verbose output")
 
 	// Add commands
 	cobra.EnableCommandSorting = false
 	rootCmd.AddCommand(mountCmd)
-	rootCmd.AddCommand(unmountCmd)
+	rootCmd.AddCommand(umountCmd)
 	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(versionCmd)
 

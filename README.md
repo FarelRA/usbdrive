@@ -87,7 +87,7 @@ usbdrive status
 When you're done, unmount the image to disconnect it from the host computer:
 
 ```bash
-usbdrive unmount
+usbdrive umount
 ```
 
 ### Read-Write Mode
