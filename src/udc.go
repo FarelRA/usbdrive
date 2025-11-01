@@ -45,6 +45,12 @@ func (u *UDCBackend) Mount(imagePath string, opts MountOptions) error {
 		return fmt.Errorf("find lun file: %w", err)
 	}
 
+	// Disconnect USB
+	logger.Info("Disconnecting USB")
+	if err := u.softConnect("disconnect"); err != nil {
+		logger.Warn("Failed to disconnect USB", "error", err)
+	}
+
 	// Clear existing file
 	logger.Info("Clearing LUN file")
 	if err := writeFile(lunFile, ""); err != nil {
@@ -61,6 +67,12 @@ func (u *UDCBackend) Mount(imagePath string, opts MountOptions) error {
 	logger.Info("Verifying mount")
 	if err := verifyMount(lunFile, imagePath); err != nil {
 		return fmt.Errorf("verify mount: %w", err)
+	}
+
+	// Reconnect USB to trigger re-enumeration
+	logger.Info("Reconnecting USB")
+	if err := u.softConnect("connect"); err != nil {
+		logger.Warn("Failed to reconnect USB", "error", err)
 	}
 
 	logger.Info("Mount verified successfully")
@@ -123,4 +135,21 @@ func (u *UDCBackend) findLunFile() (string, error) {
 	}
 
 	return "", fmt.Errorf("no lun file found")
+}
+
+func (u *UDCBackend) softConnect(action string) error {
+	udcDir := "/sys/class/udc"
+	entries, err := os.ReadDir(udcDir)
+	if err != nil {
+		return fmt.Errorf("read udc dir: %w", err)
+	}
+
+	for _, entry := range entries {
+		softConnectFile := filepath.Join(udcDir, entry.Name(), "soft_connect")
+		if fileExists(softConnectFile) {
+			return writeFile(softConnectFile, action)
+		}
+	}
+
+	return fmt.Errorf("soft_connect not found")
 }

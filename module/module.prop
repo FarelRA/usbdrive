@@ -1,6 +1,6 @@
 id=usbdrive
 name=USB Drive
 author=FarelRA (fork of nitanmarcel/isodrive-magisk)
-version=1.1.4
-versionCode=15
+version=1.1.5
+versionCode=16
 description=Mount disk images as USB mass storage on Android
