@@ -1,3 +1,5 @@
+> **Status:** Archived — no longer maintained, kept for reference.
+
 # usbdrive
 
 Mount disk images as USB mass storage devices on Android using USB gadget mode.
